@@ -1,0 +1,159 @@
+//
+//  ContentView.swift
+//  Musicbox
+//
+//  Created by Ana Chirinos on 11/09/20.
+//
+import SwiftUI
+import AVFoundation
+
+struct ContentView: View {
+    //Songs
+    @State var songs = [["classic", "Classic by MKTO"],["diamonds", "Diamonds by Rihanna"],["royals", "Royals by Lorde"],["sugar", "Sugar by Maroon 5"]]
+    @State var num = 0
+    @State var player: AVAudioPlayer?
+    //Buttons, etc.
+    @State var firstClick = false
+    @State private var circleColorChanged = false
+    @State private var playOrPause = false
+    @State private var size1Changed = false
+    @State private var size2Changed = false
+    @State private var size3Changed = false
+    @State private var size4Changed = false
+    
+    func playsound (thesong: String){
+        let thepath = Bundle.main.path(forAuxiliaryExecutable: thesong)!
+        let url = URL(fileURLWithPath: thepath)
+        do {
+            player = try AVAudioPlayer(contentsOf: url)
+            player?.play()
+        } catch {
+    }
+}
+
+    var body: some View {
+        VStack {
+        //Musical buttons
+            VStack(spacing: 70){
+                HStack(spacing: 70){
+                    Image(self.songs[0][0])
+                        .scaleEffect(self.num == 0 && playOrPause ? 1.5 : 1.0)
+                        .animation(.default)
+                        .onTapGesture{
+                            self.num = 0
+                            self.player?.stop()
+                            self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                                self.playOrPause = true
+                        }
+                    Image(self.songs[1][0])
+                        .scaleEffect(self.num == 1 && playOrPause ? 1.5 : 1.0)
+                        .animation(.default)
+                        .onTapGesture{
+                            self.num = 1
+                            self.player?.stop()
+                            self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                                self.playOrPause = true
+                        }
+                }
+                HStack(spacing: 70){
+                    Image(self.songs[2][0])
+                        .scaleEffect(self.num == 2 && playOrPause ? 1.5 : 1.0)
+                        .animation(.default)
+                        .onTapGesture{
+                            self.num = 2
+                            self.player?.stop()
+                            self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                                self.playOrPause = true
+                        }
+                    Image(self.songs[3][0])
+                        .scaleEffect(self.num == 3 && playOrPause ? 1.5 : 1.0)
+                        .animation(.default)
+                        .onTapGesture{
+                            self.num = 3
+                            self.player?.stop()
+                            self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                                self.playOrPause = true
+                }
+            }
+        }
+        .frame(height: 400)
+            Spacer()
+        //Current song playing
+        HStack{
+            Image(self.songs[self.num][0])
+                .resizable()
+                .frame(width: 80, height: 80)
+            Spacer()
+            Text(self.songs[self.num][1])
+                .font(.title)
+                .fontWeight(.regular)
+            Spacer()
+        }
+        //Control buttons
+        HStack{
+            Image(systemName: "backward.end.fill")
+                .font(.system(size: 50))
+                .frame(width: 100, height: 100)
+                .foregroundColor(.black)
+                .onTapGesture{
+                    self.num -= 1
+                    if (self.num == -1){
+                        self.num = 3
+                    }
+                    self.player?.stop()
+                    self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                        self.playOrPause = true
+                }
+            Spacer()
+            ZStack{
+               Circle()
+                .frame(width: 100, height: 100)
+                .foregroundColor(playOrPause ? .red : Color(.systemGreen))
+                if playOrPause{
+                    Image(systemName: "pause.fill")
+                        .foregroundColor(.white)
+                        .font(.system(size: 50))
+                } else {
+                    Image(systemName: "play.fill")
+                        .foregroundColor(.white)
+                        .font(.system(size: 45))
+                }
+            }
+            .onTapGesture{
+                self.circleColorChanged.toggle()
+                self.playOrPause.toggle()
+                if (self.playOrPause == true){
+                    self.player?.play()
+                    if(self.firstClick == false){
+                        self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                            self.firstClick = true
+                    }
+                } else {
+                    self.player?.pause()
+                }
+            }
+            Spacer()
+            Image(systemName: "forward.end.fill")
+            .font(.system(size: 50))
+            .frame(width: 100, height: 100)
+            .foregroundColor(.black)
+            .onTapGesture{
+                self.num += 1
+                if (self.num == 4){
+                    self.num = 0
+                }
+                self.player?.stop()
+                self.playsound(thesong: "\(self.songs[self.num][0]).m4a")
+                    self.playOrPause = true
+            }
+        }
+    }
+        .padding()
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
